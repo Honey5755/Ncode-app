@@ -682,33 +682,6 @@ export default function AdminDashboard() {
       {/* ================= TAB 1: OVERVIEW ================= */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          {/* Live Map Preview */}
-          <div className="card space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <div>
-                <h2 className="font-bold text-slate-900">
-                  Live Field Map
-                  <span className="ml-2 align-middle inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                    {Object.keys(live).length} on duty
-                  </span>
-                </h2>
-                <p className="text-xs text-slate-500">Real-time GPS broadcast & status of active field officers</p>
-              </div>
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                  wsOk ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'
-                }`}
-              >
-                <span className="flex h-2 w-2 relative">
-                  {wsOk && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${wsOk ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                </span>
-                {wsOk ? 'Live Feed Active (WebSocket)' : 'Connecting to live feed...'}
-              </span>
-            </div>
-            <MapView markers={markers} height={380} />
-          </div>
-
           {/* Active Field Personnel Table */}
           <div className="card overflow-x-auto">
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
