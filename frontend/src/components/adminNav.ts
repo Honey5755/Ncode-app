@@ -30,22 +30,6 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     ],
   },
   {
-    id: 'setup',
-    label: 'SetUp',
-    items: [
-      { id: 'employees', label: 'Employee', icon: 'users', route: '/admin/setup/employees', screen: 'setup.employee' },
-    ],
-  },
-  {
-    id: 'user-management',
-    label: 'User Management',
-    items: [
-      { id: 'roles', label: 'Role', icon: 'roles', route: '/admin/user-management/roles', screen: 'user_management.role' },
-      { id: 'logins', label: 'User', icon: 'users', route: '/admin/user-management/users', screen: 'user_management.user' },
-      { id: 'change-password', label: 'Change Password', icon: 'key', route: '/admin/change-password' },
-    ],
-  },
-  {
     id: 'general',
     label: '',
     items: [{ id: 'settings', label: 'Settings', icon: 'settings', route: '/admin/settings' }],

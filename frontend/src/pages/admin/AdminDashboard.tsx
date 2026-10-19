@@ -2283,6 +2283,16 @@ export default function AdminDashboard() {
                     Leave Requests
                   </button>
                 )}
+                {can(viewer, 'setup.employee') && (
+                  <button type="button" onClick={() => nav('/admin/setup/employees')} className="rounded-lg border border-slate-200 p-3 text-left text-sm font-semibold text-slate-700 hover:border-teal-400 hover:bg-teal-50">
+                    Employee
+                  </button>
+                )}
+                {can(viewer, 'user_management.user') && (
+                  <button type="button" onClick={() => nav('/admin/user-management/users')} className="rounded-lg border border-slate-200 p-3 text-left text-sm font-semibold text-slate-700 hover:border-teal-400 hover:bg-teal-50">
+                    User Logins
+                  </button>
+                )}
                 {can(viewer, 'user_management.role') && (
                   <button type="button" onClick={() => nav('/admin/user-management/roles')} className="rounded-lg border border-slate-200 p-3 text-left text-sm font-semibold text-slate-700 hover:border-teal-400 hover:bg-teal-50">
                     Roles & Permissions
