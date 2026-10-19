@@ -128,6 +128,8 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
   };
 
   const navGroups = visibleNav(user);
+  const mainGroups = navGroups.filter((g) => g.label);
+  const pinnedGroups = navGroups.filter((g) => !g.label);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -146,6 +148,83 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
     setFloatingTooltip({ label, badge, top: rect.top + rect.height / 2, left: rect.right + 12 });
   };
   const hideTooltip = () => setFloatingTooltip(null);
+
+  const renderGroup = (group: (typeof navGroups)[number], gi: number) => {
+      const open = collapsed || !group.label || !closedGroups.includes(group.id);
+      return (
+        <div key={group.id} className="space-y-1.5">
+          {group.label && !collapsed && (
+            <button
+              type="button"
+              onClick={() => toggleGroup(group.id)}
+              aria-expanded={open}
+              className={`w-full flex items-center justify-between px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-300 focus:outline-none focus:text-slate-300 ${gi > 0 ? 'pt-3' : 'pt-1'}`}
+            >
+              <span className="truncate">{group.label}</span>
+              <svg className={`w-3 h-3 shrink-0 transition-transform ${open ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+          )}
+          {(collapsed || !group.label) && gi > 0 && <div className="mx-2 my-2 border-t border-slate-700/60" aria-hidden="true" />}
+          {open && group.items.map((tab) => {
+            const isActive = pathname === tab.route || pathname.startsWith(`${tab.route}/`);
+            const badge = badges?.[tab.id];
+            const badgeDisplay = badge ? (badge > 99 ? '99+' : String(badge)) : null;
+
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  nav(tab.route);
+                  setMobileOpen(false);
+                }}
+                aria-current={isActive ? 'page' : undefined}
+                onMouseEnter={(e) => showTooltip(e, tab.label, badgeDisplay || undefined)}
+                onMouseLeave={hideTooltip}
+                onFocus={(e) => showTooltip(e, tab.label, badgeDisplay || undefined)}
+                onBlur={hideTooltip}
+                title={!collapsed ? tab.label : undefined}
+                className={`relative flex items-center h-11 rounded-xl font-medium text-sm transition-all box-border w-full group focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 focus:ring-offset-slate-900 ${
+                  collapsed ? 'justify-center px-0' : 'gap-3 px-3'
+                } ${isActive ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'text-slate-300 hover:text-white hover:bg-slate-800/80'}`}
+              >
+                <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
+                  <Icon name={tab.icon} />
+                  {collapsed && badgeDisplay && (
+                    <span
+                      aria-hidden="true"
+                      className={`absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center leading-none shadow-md pointer-events-none ${
+                        isActive ? 'bg-white text-blue-700' : 'bg-blue-500 text-white'
+                      }`}
+                    >
+                      {badgeDisplay}
+                    </span>
+                  )}
+                </div>
+
+                {collapsed ? (
+                  <span className="sr-only">{tab.label} {badgeDisplay ? `(${badgeDisplay})` : ''}</span>
+                ) : (
+                  <>
+                    <span className="truncate min-w-0 flex-1 text-left">{tab.label}</span>
+                    {badgeDisplay && (
+                      <span
+                        className={`ml-auto px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${
+                          isActive ? 'bg-white text-blue-700' : 'bg-slate-800 text-slate-300 group-hover:bg-slate-700'
+                        }`}
+                      >
+                        {badgeDisplay}
+                      </span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      );
+  };
+
 
   return (
     <div className="min-h-screen bg-slate-100 flex font-sans text-slate-800 antialiased selection:bg-blue-600 selection:text-white box-border overflow-x-hidden">
@@ -243,82 +322,15 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
 
         {/* Nav */}
         <nav aria-label="Admin" className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2.5 space-y-1.5 box-border">
-          {navGroups.map((group, gi) => {
-            const open = collapsed || !group.label || !closedGroups.includes(group.id);
-            return (
-              <div key={group.id} className="space-y-1.5">
-                {group.label && !collapsed && (
-                  <button
-                    type="button"
-                    onClick={() => toggleGroup(group.id)}
-                    aria-expanded={open}
-                    className={`w-full flex items-center justify-between px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-300 focus:outline-none focus:text-slate-300 ${gi > 0 ? 'pt-3' : 'pt-1'}`}
-                  >
-                    <span className="truncate">{group.label}</span>
-                    <svg className={`w-3 h-3 shrink-0 transition-transform ${open ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                )}
-                {(collapsed || !group.label) && gi > 0 && <div className="mx-2 my-2 border-t border-slate-700/60" aria-hidden="true" />}
-                {open && group.items.map((tab) => {
-                  const isActive = pathname === tab.route || pathname.startsWith(`${tab.route}/`);
-                  const badge = badges?.[tab.id];
-                  const badgeDisplay = badge ? (badge > 99 ? '99+' : String(badge)) : null;
-
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => {
-                        nav(tab.route);
-                        setMobileOpen(false);
-                      }}
-                      aria-current={isActive ? 'page' : undefined}
-                      onMouseEnter={(e) => showTooltip(e, tab.label, badgeDisplay || undefined)}
-                      onMouseLeave={hideTooltip}
-                      onFocus={(e) => showTooltip(e, tab.label, badgeDisplay || undefined)}
-                      onBlur={hideTooltip}
-                      title={!collapsed ? tab.label : undefined}
-                      className={`relative flex items-center h-11 rounded-xl font-medium text-sm transition-all box-border w-full group focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 focus:ring-offset-slate-900 ${
-                        collapsed ? 'justify-center px-0' : 'gap-3 px-3'
-                      } ${isActive ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'text-slate-300 hover:text-white hover:bg-slate-800/80'}`}
-                    >
-                      <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
-                        <Icon name={tab.icon} />
-                        {collapsed && badgeDisplay && (
-                          <span
-                            aria-hidden="true"
-                            className={`absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center leading-none shadow-md pointer-events-none ${
-                              isActive ? 'bg-white text-blue-700' : 'bg-blue-500 text-white'
-                            }`}
-                          >
-                            {badgeDisplay}
-                          </span>
-                        )}
-                      </div>
-
-                      {collapsed ? (
-                        <span className="sr-only">{tab.label} {badgeDisplay ? `(${badgeDisplay})` : ''}</span>
-                      ) : (
-                        <>
-                          <span className="truncate min-w-0 flex-1 text-left">{tab.label}</span>
-                          {badgeDisplay && (
-                            <span
-                              className={`ml-auto px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${
-                                isActive ? 'bg-white text-blue-700' : 'bg-slate-800 text-slate-300 group-hover:bg-slate-700'
-                              }`}
-                            >
-                              {badgeDisplay}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })}
+          {mainGroups.map(renderGroup)}
         </nav>
+
+        {/* Pinned just above the user card (unlabelled groups, e.g. Settings) */}
+        {pinnedGroups.length > 0 && (
+          <div className="shrink-0 border-t border-slate-700/60 px-2.5 py-2 space-y-1.5 box-border">
+            {pinnedGroups.map((g) => renderGroup(g, 0))}
+          </div>
+        )}
 
         {/* Footer: user card + sign out */}
         <div className="shrink-0 border-t border-slate-700/60 bg-[#0f172a]/50 p-2.5 box-border">
