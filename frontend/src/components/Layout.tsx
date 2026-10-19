@@ -93,6 +93,8 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
     setClosedGroups((prev) => (prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]));
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifCount = badges?.leaves ?? 0;
   const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -419,16 +421,43 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 truncate">
-              <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-              <span className="truncate">{department}</span>
-            </span>
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-sm shrink-0">
-                {fullName.charAt(0).toUpperCase()}
-              </div>
-            </div>
+          <div className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setNotifOpen((o) => !o)}
+              aria-label="Notifications"
+              aria-expanded={notifOpen}
+              className="relative p-2 rounded-full text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" /></svg>
+              {notifCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                  {notifCount > 99 ? '99+' : notifCount}
+                </span>
+              )}
+            </button>
+            {notifOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} aria-hidden="true" />
+                <div className="absolute right-0 mt-2 w-72 rounded-xl bg-white border border-slate-200 shadow-xl z-50 overflow-hidden">
+                  <p className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Notifications</p>
+                  {notifCount > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNotifOpen(false);
+                        nav('/admin/leaves');
+                      }}
+                      className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                      <span className="font-semibold">{notifCount}</span> leave request{notifCount === 1 ? '' : 's'} to review
+                    </button>
+                  ) : (
+                    <p className="px-4 py-6 text-sm text-center text-slate-400">No new notifications</p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </header>
 
