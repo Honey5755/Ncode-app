@@ -168,9 +168,9 @@ export default function LoginScreen() {
                 <View style={styles.divider} />
                 {(
                   [
-                    ['Admin Portal', 'admin', 'adminpassword123', 'ADMIN'],
-                    ['Field Officer Portal', 'NS00125', 'Password123!', 'USER'],
-                    ['Manager Portal', 'manager', 'ManagerPass123!', 'MANAGER'],
+                    ['Admin Portal', 'admin@honey.com', '123456', 'ADMIN'],
+                    ['Field Officer Portal', 'staff@honey.com', '123456', 'USER'],
+                    ['Manager Portal', 'manager@honey.com', '123456', 'MANAGER'],
                   ] as const
                 ).map(([label, id, pass, exp]) => (
                   <TouchableOpacity key={id} style={styles.direct} onPress={() => signIn(id, pass, exp)} disabled={busy}>

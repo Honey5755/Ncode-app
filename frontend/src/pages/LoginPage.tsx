@@ -234,7 +234,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       className="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 rounded shadow-sm transition-colors"
-                      onClick={() => directLogin('admin', 'adminpassword123')}
+                      onClick={() => directLogin('admin@honey.com', '123456')}
                       disabled={busy}
                     >
                       Direct Login (Admin Portal)
@@ -242,7 +242,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       className="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 rounded shadow-sm transition-colors"
-                      onClick={() => directLogin('NS00125', 'Password123!')}
+                      onClick={() => directLogin('staff@honey.com', '123456')}
                       disabled={busy}
                     >
                       Direct Login (Field Officer Portal)
@@ -250,7 +250,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       className="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 rounded shadow-sm transition-colors"
-                      onClick={() => directLogin('manager', 'ManagerPass123!')}
+                      onClick={() => directLogin('manager@honey.com', '123456')}
                       disabled={busy}
                     >
                       Direct Login (Manager Portal)
