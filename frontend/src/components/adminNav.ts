@@ -33,11 +33,6 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     id: 'setup',
     label: 'SetUp',
     items: [
-      { id: 'zones', label: 'Zone / District', icon: 'globe', route: '/admin/setup/zones', screen: 'setup.zone_district' },
-      { id: 'talukas', label: 'Taluka / Village', icon: 'visits', route: '/admin/setup/talukas', screen: 'setup.taluka_village' },
-      { id: 'agencies', label: 'Agency', icon: 'transfer', route: '/admin/setup/agencies', screen: 'setup.agency' },
-      { id: 'offices', label: 'Office', icon: 'building', route: '/admin/setup/offices', screen: 'setup.office' },
-      { id: 'designations', label: 'Designation', icon: 'id', route: '/admin/setup/designations', screen: 'setup.designation' },
       { id: 'employees', label: 'Employee', icon: 'users', route: '/admin/setup/employees', screen: 'setup.employee' },
       { id: 'wtp-sites', label: 'WTP Inspection', icon: 'drop', route: '/admin/setup/wtp-sites', screen: 'setup.wtp_inspection' },
     ],
