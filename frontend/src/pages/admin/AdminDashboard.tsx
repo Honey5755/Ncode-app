@@ -82,14 +82,14 @@ function StatTile({
       onClick={onAction}
       className={`rounded-xl bg-gradient-to-br ${c.gradient} text-white p-4 shadow-sm hover:shadow-md transition-all text-left relative overflow-hidden group focus:outline-none focus:ring-2 ${c.ring}`}
     >
-      <div className="flex items-center justify-between gap-1">
-        <p className={`text-xs font-bold uppercase tracking-wider ${c.label} truncate`}>{label}</p>
+      <p className={`text-xs font-bold uppercase tracking-wider leading-tight ${c.label}`}>{label}</p>
+      <div className="flex items-end justify-between gap-2 mt-2">
+        <p className="text-3xl font-extrabold tracking-tight leading-none">{value}</p>
         <span className={`text-[11px] font-semibold px-2 py-0.5 rounded text-white transition-colors whitespace-nowrap shrink-0 ${c.pill}`}>
           {action} →
         </span>
       </div>
-      <p className="text-3xl font-extrabold mt-2 tracking-tight">{value}</p>
-      <p className={`text-[11px] ${c.caption} mt-1 font-medium truncate`}>{caption}</p>
+      <p className={`text-[11px] ${c.caption} mt-2 font-medium leading-snug`}>{caption}</p>
     </button>
   );
 }
