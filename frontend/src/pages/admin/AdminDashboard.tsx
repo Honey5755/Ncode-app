@@ -937,7 +937,7 @@ export default function AdminDashboard() {
               {/* CSV Export Button */}
               <button
                 type="button"
-                className="btn btn-secondary inline-flex items-center gap-2 self-start sm:self-auto text-xs font-semibold py-2 px-3.5 shadow-sm"
+                className="btn btn-primary inline-flex items-center gap-2 self-start sm:self-auto whitespace-nowrap text-xs font-semibold py-2 px-3.5 shadow-sm"
                 onClick={handleExportVisitsCsv}
                 disabled={visitExportingCsv || visitTotalCount === 0}
                 title="Download CSV export with current filters applied"
@@ -1010,7 +1010,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Filters Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 text-xs">
                 {/* Date From */}
                 <div>
                   <label className="label">Date From</label>
@@ -1080,37 +1080,40 @@ export default function AdminDashboard() {
 
                 {/* Status Dropdown */}
                 <div>
-                  <label className="label">Status / Outcome</label>
-                  <div className="flex gap-1.5">
-                    <select
-                      className="input !py-1.5 !text-xs text-slate-800 flex-1"
-                      value={visitStatus}
-                      onChange={(e) => {
-                        setVisitStatus(e.target.value);
-                        setVisitPage(1);
-                      }}
-                    >
-                      {VISIT_STATUSES.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      className="input !py-1.5 !text-xs text-slate-800 flex-1"
-                      value={visitOutcome}
-                      onChange={(e) => {
-                        setVisitOutcome(e.target.value);
-                        setVisitPage(1);
-                      }}
-                    >
-                      {VISIT_OUTCOMES.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <label className="label">Status</label>
+                  <select
+                    className="input !py-1.5 !text-xs text-slate-800"
+                    value={visitStatus}
+                    onChange={(e) => {
+                      setVisitStatus(e.target.value);
+                      setVisitPage(1);
+                    }}
+                  >
+                    {VISIT_STATUSES.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Outcome Dropdown */}
+                <div>
+                  <label className="label">Outcome</label>
+                  <select
+                    className="input !py-1.5 !text-xs text-slate-800"
+                    value={visitOutcome}
+                    onChange={(e) => {
+                      setVisitOutcome(e.target.value);
+                      setVisitPage(1);
+                    }}
+                  >
+                    {VISIT_OUTCOMES.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -1128,7 +1131,7 @@ export default function AdminDashboard() {
             {/* Desktop Visits Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-sm min-w-[850px]">
-                <thead className="text-xs uppercase text-slate-500 border-b border-slate-100 bg-slate-50/50">
+                <thead className="text-xs uppercase whitespace-nowrap text-slate-500 border-b border-slate-100 bg-slate-50/50">
                   <tr>
                     <th className="py-2.5 px-3">Visit ID</th>
                     <th className="px-3">Officer & Dept</th>
@@ -1409,7 +1412,7 @@ export default function AdminDashboard() {
                   <strong>{visitTotalCount}</strong> visits
                 </span>
                 <span className="text-slate-400">|</span>
-                <label className="flex items-center gap-1">
+                <label className="flex items-center gap-1.5 whitespace-nowrap">
                   <span>Per page:</span>
                   <select
                     value={visitPageSize}
@@ -1417,7 +1420,7 @@ export default function AdminDashboard() {
                       setVisitPageSize(Number(e.target.value));
                       setVisitPage(1);
                     }}
-                    className="input !py-1 !px-2 !text-xs border-slate-200"
+                    className="input !w-auto !py-1 !px-2 !text-xs border-slate-200"
                   >
                     <option value={15}>15</option>
                     <option value={25}>25</option>
