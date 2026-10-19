@@ -121,7 +121,6 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
 
   const fullName = user?.full_name || user?.username || 'Administrator';
   const designation = user?.profile?.designation || (user?.role === 'ADMIN' ? 'System Administrator' : 'Manager');
-  const department = user?.profile?.department || 'IT Division (GNFC)';
 
   const handleLogout = () => {
     setMobileOpen(false);
