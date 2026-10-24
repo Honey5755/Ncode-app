@@ -132,3 +132,10 @@ export interface EmployeeDocument {
 }
 
 export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface TrackingEvent {
+  id: number;
+  event_type: string;
+  timestamp: string;
+  metadata: Record<string, unknown>;
+}

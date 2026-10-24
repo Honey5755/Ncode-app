@@ -77,7 +77,7 @@ export default function RouteScreen() {
 
 const styles = StyleSheet.create({
   wrap: { flex: 1, backgroundColor: '#f8fafc' },
-  header: { paddingTop: 56, paddingHorizontal: 16, paddingBottom: 12, backgroundColor: '#fff' },
+  header: { paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12, backgroundColor: '#fff' },
   title: { fontSize: 18, fontWeight: '700', color: '#0f172a' },
   sub: { fontSize: 12, color: '#64748b', marginTop: 2 },
   err: { color: '#dc2626', padding: 12 },

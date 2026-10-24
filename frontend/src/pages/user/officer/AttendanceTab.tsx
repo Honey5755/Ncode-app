@@ -84,7 +84,7 @@ export default function AttendanceTab({
               {session ? `Punched in at ${fmtTime(session.punch_in_at)}` : 'Verify consent, acquire GPS lock, and capture front selfie'}
             </p>
           </div>
-          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${session ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+          <span className={`shrink-0 whitespace-nowrap text-[11px] font-bold px-2.5 py-1 rounded-full border ${session ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
             {session ? t('onDuty') : t('offDuty')}
           </span>
         </div>

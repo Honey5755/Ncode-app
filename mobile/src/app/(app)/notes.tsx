@@ -130,7 +130,7 @@ export default function NotesScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f1f5f9' },
-  content: { padding: 20, paddingTop: 60 },
+  content: { padding: 20, paddingTop: 16 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9' },
   backRow: { marginBottom: 12 },
   backText: { color: '#00c696', fontSize: 14, fontWeight: '600' },
