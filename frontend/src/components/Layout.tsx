@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useT } from '../pages/user/officer/i18n';
 import { visibleNav } from './adminNav';
 
 interface NavTab {
@@ -20,6 +21,8 @@ interface LayoutProps {
   onTabChange?: (tabId: string) => void;
   /** Admin portal: counts shown next to nav items, keyed by nav item id. */
   badges?: Record<string, number>;
+  /** Staff portal: shows On duty / Off duty in the header. */
+  onDuty?: boolean;
   children: ReactNode;
 }
 
@@ -468,108 +471,66 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
   );
 }
 
-/** Mobile-first bottom app nav (Staff/Field Officer portal — also used by the native app). */
-function StaffShell({ title, subtitle, tabs, activeTab, onTabChange, children }: LayoutProps) {
+/** Mobile-first staff shell: header with duty badge + labelled bottom tab bar. */
+const STAFF_TABS: { id: string; key: string; icon: string }[] = [
+  { id: 'dashboard', key: 'attendance', icon: 'M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4' },
+  { id: 'visits', key: 'fieldVisits', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+  { id: 'history', key: 'history', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'profile', key: 'profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+];
+
+function StaffShell({ title, subtitle, activeTab, onTabChange, onDuty, children }: LayoutProps) {
   const { user } = useAuth();
-  const nav = useNavigate();
-  const location = useLocation();
-
-  const employeeId = user?.profile?.employee_id || user?.username || '';
+  const { t } = useT();
   const fullName = user?.full_name || user?.username || 'Field Officer';
-  const designation = user?.profile?.designation || 'Field Officer';
-
-  const defaultTabs = [
-    { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'setup', label: 'Setup', icon: 'setup' },
-    { id: 'users', label: 'User Management', icon: 'users' },
-    { id: 'transfer', label: 'Transfer', icon: 'transfer' },
-    { id: 'news', label: 'News', icon: 'news' },
-    { id: 'reports', label: 'Reports', icon: 'reports' },
-  ];
-
-  const sidebarTabs = tabs && tabs.length > 0 ? tabs : defaultTabs;
-  const bottomTabs = sidebarTabs.filter((tab) => !['users', 'leaves'].includes(tab.id));
-
-  const selectTab = (tabId: string) => {
-    onTabChange?.(tabId);
-    if (tabId === 'home') nav('/');
-  };
+  const initials = fullName.trim().split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase() || '?';
 
   return (
-    <div className="min-h-screen bg-[#e8e9eb] flex font-sans text-slate-800">
-      {/* Bottom app navigation */}
-      <aside className="fixed inset-x-0 bottom-0 z-40 h-16 bg-[#2c3136] text-white border-t border-slate-700 shadow-[0_-4px_12px_rgba(0,0,0,0.12)]">
-        <div className="h-full w-full overflow-x-auto px-2 flex items-stretch justify-start gap-1">
-          {bottomTabs.map((tab) => {
-            const isActive = activeTab === tab.id || (tab.id === 'home' && location.pathname === '/');
+    <div className="min-h-screen bg-[#e8ebf1] font-sans text-slate-800 flex justify-center">
+      <div className="w-full max-w-xl h-screen flex flex-col bg-slate-50 sm:shadow-2xl relative">
+        <header className="shrink-0 h-16 bg-white border-b border-slate-100 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-xs font-bold flex items-center justify-center shrink-0">{initials}</div>
+            <div className="min-w-0">
+              <p className="text-sm font-extrabold text-slate-900 truncate leading-tight">
+                {fullName} <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 align-middle ml-0.5" />
+              </p>
+              <p className="text-[11px] text-slate-500">{new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${onDuty ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${onDuty ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+            {onDuty ? t('onDuty') : t('offDuty')}
+          </span>
+        </header>
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          {(title || subtitle) && (
+            <div className="px-4 pt-4">
+              {title && <h2 className="text-xl font-semibold text-slate-800">{title}</h2>}
+              {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+            </div>
+          )}
+          {children}
+        </main>
+
+        <nav className="shrink-0 h-16 bg-white border-t border-slate-100 flex items-center justify-around px-2" aria-label="Staff">
+          {STAFF_TABS.map((tab) => {
+            const active = activeTab === tab.id || (tab.id === 'dashboard' && activeTab === 'home');
             return (
               <button
                 key={tab.id}
-                onClick={() => selectTab(tab.id)}
-                title={tab.label}
-                className={`flex-1 min-w-14 h-full rounded-lg flex flex-col items-center justify-center px-1.5 transition-colors ${
-                  isActive ? 'bg-[#00a29a] text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-700'
-                }`}
+                type="button"
+                onClick={() => onTabChange?.(tab.id)}
+                aria-current={active ? 'page' : undefined}
+                className={`flex flex-col items-center justify-center gap-0.5 px-4 py-1.5 rounded-xl transition-colors ${active ? 'bg-emerald-50 text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
               >
-                <span className="w-5 h-5 flex-shrink-0 flex items-center justify-center">{tabIcon(tab)}</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={tab.icon} /></svg>
+                <span className="text-[10px] font-bold">{t(tab.key)}</span>
               </button>
             );
           })}
-        </div>
-      </aside>
-
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden pb-16">
-        <header className="h-16 bg-white shadow-sm z-30 flex items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="relative flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full border border-blue-200 bg-blue-50 flex items-center justify-center">
-                 <span className="text-blue-600 font-bold text-sm">(n)</span>
-              </div>
-              <h1 className="text-sm font-bold text-[#0088ff]">Ncode Staff Portal</h1>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="relative cursor-pointer">
-              <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">0</span>
-            </div>
-
-            <div className="relative">
-              <button
-                type="button"
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-slate-100"
-                title={fullName}
-              >
-              <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 overflow-hidden">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
-              </div>
-              <div className="hidden sm:block">
-                <div className="text-xs font-bold text-slate-700 uppercase leading-none">{fullName}</div>
-                <div className="text-[10px] text-slate-400 uppercase mt-1">{designation}</div>
-              </div>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-24">
-          {(title || subtitle) && (
-             <div className="mb-6 flex items-center justify-between">
-                <div>
-                  {title && <h2 className="text-2xl font-semibold text-slate-800">{title}</h2>}
-                  {subtitle && <p className="text-sm text-slate-500 mt-1">{subtitle}</p>}
-                </div>
-             </div>
-          )}
-          {children}
-
-          <div className="mt-12 pt-4 border-t border-slate-300 text-center text-xs text-slate-400">
-             Design & Developed by © {new Date().getFullYear()} (n)Code Solutions
-          </div>
-           <div className="h-24 shrink-0" aria-hidden="true" />
-        </main>
+        </nav>
       </div>
     </div>
   );
