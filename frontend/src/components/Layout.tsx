@@ -123,7 +123,8 @@ function AdminShell({ title, subtitle, badges, children }: LayoutProps) {
   const [floatingTooltip, setFloatingTooltip] = useState<FloatingTooltipState | null>(null);
 
   const fullName = user?.full_name || user?.username || 'Administrator';
-  const designation = user?.profile?.designation || (user?.role === 'ADMIN' ? 'System Administrator' : 'Manager');
+  // Portal users are labelled by role; a staff-style designation (e.g. "Field Officer") would be misleading here.
+  const designation = user?.role === 'ADMIN' ? 'Administrator' : user?.access_role?.name || 'Manager';
 
   const handleLogout = () => {
     setMobileOpen(false);

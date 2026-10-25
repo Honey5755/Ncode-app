@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { errorMessage } from '../services/api';
 
@@ -229,7 +229,8 @@ export default function LoginPage() {
                 >
                   Reset
                 </button>
-                {loginRole === 'staff' && (
+                {/* Demo shortcuts: dev server only, never in a production build */}
+                {import.meta.env.DEV && loginRole === 'staff' && (
                   <div className="pt-2 border-t border-slate-100 space-y-2">
                     <button
                       type="button"
@@ -260,11 +261,6 @@ export default function LoginPage() {
               </div>
             </form>
 
-            {loginRole === 'staff' && (
-              <div className="mt-8 pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
-                New employee? <Link className="text-blue-600 hover:underline" to="/register">Register</Link>
-              </div>
-            )}
           </div>
         </div>
       </div>

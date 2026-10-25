@@ -163,7 +163,8 @@ export default function LoginScreen() {
               <Text style={styles.resetText}>Reset</Text>
             </TouchableOpacity>
 
-            {role === 'staff' && (
+            {/* Demo shortcuts: development only, hidden in release builds */}
+            {__DEV__ && role === 'staff' && (
               <>
                 <View style={styles.divider} />
                 {(

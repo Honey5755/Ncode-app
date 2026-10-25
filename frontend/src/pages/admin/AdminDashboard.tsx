@@ -22,6 +22,16 @@ import type {
 
 type AdminTab = 'overview' | 'users' | 'map' | 'visits' | 'attendance' | 'leaves' | 'settings';
 
+const TAB_TITLES: Record<AdminTab, string | undefined> = {
+  overview: 'Field Activity & Attendance Command Center',
+  map: 'Live Map',
+  visits: 'Field Visits',
+  attendance: 'Attendance Records',
+  leaves: 'Leave Requests',
+  users: 'Employees & Users',
+  settings: undefined,
+};
+
 const STAT_TILE_COLORS = {
   blue: {
     gradient: 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800',
@@ -279,6 +289,21 @@ export default function AdminDashboard() {
       ws?.close();
     };
   }, [canDashboard]);
+
+  // Hosts without WebSockets (e.g. Vercel) never connect: poll the live list instead.
+  useEffect(() => {
+    if (!canDashboard || wsOk) return;
+    const poll = () =>
+      api
+        .get<LivePoint[]>('/admin/live/')
+        .then((r) => setLive(Object.fromEntries(r.data.map((p) => [p.session_id, p]))))
+        .catch(() => undefined);
+    const t = window.setInterval(() => {
+      poll();
+      refreshSummary();
+    }, 15000);
+    return () => clearInterval(t);
+  }, [canDashboard, wsOk]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Export CSV Handler
   const handleExportCsv = async () => {
@@ -625,7 +650,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout
-      title={activeTab === 'settings' ? undefined : 'Field Activity & Attendance Command Center'}
+      title={TAB_TITLES[activeTab]}
       subtitle={activeTab === 'settings' ? undefined : 'Ncode Solution IT Division (GNFC) · Central Operations'}
       badges={{
         users: users.length,

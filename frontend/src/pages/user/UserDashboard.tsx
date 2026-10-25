@@ -273,33 +273,16 @@ export default function UserDashboard() {
     setError('');
     setSuccessMsg('');
     try {
-      let lat = 0;
-      let lng = 0;
-      let acc = 10;
-      
+      // A real GPS fix is required: no IP or fixed-coordinate fallback, so a shift never starts at a made-up place.
+      let pos: GeolocationPosition;
       try {
-        const pos = await getPosition(10000);
-        lat = pos.coords.latitude;
-        lng = pos.coords.longitude;
-        acc = pos.coords.accuracy;
-      } catch (gpsError) {
-        console.warn("GPS failed, falling back to IP Geolocation.", gpsError);
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          const data = await res.json();
-          if (data.latitude && data.longitude) {
-            lat = data.latitude;
-            lng = data.longitude;
-            acc = 500; // IP geolocation is less accurate
-          } else {
-            throw new Error("IP API failed");
-          }
-        } catch (ipError) {
-           // Absolute last resort fallback if both GPS and IP fail
-           lat = 21.1702; 
-           lng = 72.8311;
-        }
+        pos = await getPosition(10000);
+      } catch {
+        throw new Error('Could not get your GPS location. Turn on location services, allow location for this site, and try again.');
       }
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const acc = pos.coords.accuracy;
 
       const fd = new FormData();
       fd.append('selfie', fileToUse);
