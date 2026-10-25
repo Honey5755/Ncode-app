@@ -25,6 +25,9 @@ import type {
   VisitType,
 } from '../../types';
 
+// List endpoints answer either a bare array or a paginated {results} page.
+const asList = <T,>(d: T[] | { results?: T[] } | null | undefined): T[] => (Array.isArray(d) ? d : d?.results ?? []);
+
 const getPosition = (timeout: number) =>
   new Promise<GeolocationPosition>((res, rej) =>
     navigator.geolocation
@@ -77,6 +80,7 @@ const fmtDurationLive = (startTimeStr: string) => {
 export default function UserDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [hubKey, setHubKey] = useState(0); // bumping it reopens the Profile hub at its top level
 
   const [session, setSession] = useState<Session | null>(null);
   usePunchReminder(!!session);
@@ -194,15 +198,15 @@ export default function UserDashboard() {
     if (activeModal === 'leave') {
       setLoadingLeaves(true);
       api
-        .get<LeaveRequest[]>('/attendance/leaves/')
-        .then((r) => setMyLeaves(r.data || []))
+        .get<LeaveRequest[] | { results: LeaveRequest[] }>('/attendance/leaves/')
+        .then((r) => setMyLeaves(asList(r.data)))
         .catch(() => setMyLeaves([]))
         .finally(() => setLoadingLeaves(false));
     }
     if (activeModal === 'holidays') {
       api
-        .get<Holiday[]>('/attendance/holidays/')
-        .then((r) => setHolidays(r.data || []))
+        .get<Holiday[] | { results: Holiday[] }>('/attendance/holidays/')
+        .then((r) => setHolidays(asList(r.data)))
         .catch(() => setHolidays([]));
     }
   }, [activeModal]);
@@ -725,6 +729,7 @@ export default function UserDashboard() {
       onDuty={!!session}
       activeTab={activeTab}
       onTabChange={(tabId) => {
+        if (tabId === 'profile') setHubKey((k) => k + 1);
         setActiveTab(tabId as TabType);
         setError('');
         setSuccessMsg('');
@@ -1062,7 +1067,7 @@ export default function UserDashboard() {
 
       {/* ================= TAB 6: PROFILE (MAIN HUB) ================= */}
       {activeTab === 'profile' && (
-        <ProfileHub history={history} onOpenLeave={() => setActiveModal('leave')} onGoTab={(tab) => setActiveTab(tab as TabType)} />
+        <ProfileHub key={hubKey} history={history} onOpenLeave={() => setActiveModal('leave')} onGoTab={(tab) => setActiveTab(tab as TabType)} />
       )}
       {/* ================= 1. START FIELD VISIT MODAL ================= */}
       {showStartModal && (

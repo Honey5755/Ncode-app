@@ -29,7 +29,7 @@ const TAB_TITLES: Record<AdminTab, string | undefined> = {
   attendance: 'Attendance Records',
   leaves: 'Leave Requests',
   users: 'Employees & Users',
-  settings: undefined,
+  settings: 'Settings',
 };
 
 const STAT_TILE_COLORS = {
